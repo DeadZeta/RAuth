@@ -2,9 +2,9 @@ name: RAuth
 main: RAuth\Main
 api: 3.14.0
 mcpe-protocol: 407
-version: 1.0
+version: 1.2
 author: DeadZeta
-website: renstudio.su
+website: ren-studio.su
 
 commands:
   register:
