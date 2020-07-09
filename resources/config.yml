@@ -1,0 +1,22 @@
+---
+settings:
+  # Maximum number of authorization attempts.
+  max_wrongs: 5
+  # Player ban time after all failed attempts (minutes).
+  max_wrongs_time: 5
+  # The number of visits from 1 IP. Attention, if the server does not have auto-restart then disable this limit by setting 0. BotFilter
+  max_joins: 25
+  # Time for the player to login (seconds).
+  timeout: 120
+
+# Database Provider: SQLITE, MYSQL
+provider: SQLITE
+
+# MYSQL login details
+mysql_data:
+  host: 127.0.0.1
+  user: yourUser
+  password: yourPassword
+  base: yourDataBase
+  port: 3306
+...
