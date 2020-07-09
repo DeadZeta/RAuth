@@ -1,0 +1,13 @@
+name: RAuth
+main: RAuth\Main
+api: 3.14.0
+mcpe-protocol: 407
+version: 1.0
+author: DeadZeta
+website: renstudio.su
+
+commands:
+  register:
+    default: true
+  login:
+    default: true
