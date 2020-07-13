@@ -1,4 +1,6 @@
 Authorization for your PMMP server.
+<br>
+![logo_512](https://github.com/DeadZeta/RAuth/blob/master/icon.png)
 ## Plans
 - [X] Elementary BotFilter.
 - [X] It works on two providers: SQLITE, MYSQL
