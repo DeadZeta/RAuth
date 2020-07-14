@@ -8,6 +8,8 @@ settings:
   max_joins: 25
   # Time for the player to login (seconds).
   timeout: 120
+  # true - to use Forms for Authorization, false - to use commands /login, /register
+  form: false
 
 # Database Provider: SQLITE, MYSQL
 provider: SQLITE
