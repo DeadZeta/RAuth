@@ -2,12 +2,17 @@ name: RAuth
 main: RAuth\Main
 api: 3.14.0
 mcpe-protocol: 407
-version: 1.2
+version: 1.3
 author: DeadZeta
-website: ren-studio.su
+website: deadzeta.ml
 
 commands:
   register:
     default: true
+    description: Player Registration on the Server
   login:
     default: true
+    description: Player Authorization on IP Server
+  achpw:
+    default: true
+    description: Player Password Change
