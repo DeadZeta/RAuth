@@ -28,6 +28,7 @@ use pocketmine\event\entity\EntityDamageEvent;
 class EventListener implements Listener {
 
 	protected $plugin;
+	protected $formapi;
 	private $provider;
 	private $config;
 
@@ -36,8 +37,9 @@ class EventListener implements Listener {
 	protected $wrong = array();
 	protected $task = array();
 
-	public function __construct(PluginBase $plugin, $provider, $config) {
+	public function __construct(PluginBase $plugin, $formapi, $provider, $config) {
 		$this->plugin = $plugin;
+		$this->formapi = $formapi;
 		$this->provider = $provider;
 		$this->config = $config;
 	}
@@ -48,10 +50,13 @@ class EventListener implements Listener {
 		$message = explode(" ", $message);
 		$command = $message[0];
 		unset($message[0]);
-		$args = $message;
+		$message = implode(" ", $message);
+		$args = explode(" ", $message);
 
-		if($this->valid[$player->getName()] === true && $command{0} != "/" && $command != "/login" || $command != "/register") {
-			$event->setCancelled();
+		if($command{0} != "/" && $command != "/login" || $command != "/register" || $command != "achpw") {
+			if($this->valid[$player->getName()] === true) {
+				$event->setCancelled();
+			}
 		}
 
 		switch ($command) {
@@ -61,17 +66,22 @@ class EventListener implements Listener {
 					return true;
 				}
 
-				if(!$args[1] || !$args[2]) {
+				if(!isset($args[0], $args[1])) {
 					$player->sendMessage("Usage: /register <password> <repassword>.");
 					return true;
 				}
 
-				if($args[1] != $args[2]) {
+				if(strlen($data[0]) == 0) {
+    				$player->sendMessage("Password must not be empty!");
+    				return;
+    			}
+
+				if($args[0] != $args[1]) {
 					$player->sendMessage("Password mismatch.");
 					return true;
 				}
 
-				if(!$this->provider->registerPlayer($player, $args[1])) {
+				if(!$this->provider->registerPlayer($player, $args[0])) {
 					$player->sendMessage("You are already registered!");
 					return false;
 				}
@@ -92,7 +102,7 @@ class EventListener implements Listener {
 					return true;
 				}
 
-				if(!$args[1]) {
+				if(!isset($args[0])) {
 					$player->sendMessage("Usage: /login <password>.");
 					return true;
 				}
@@ -111,7 +121,7 @@ class EventListener implements Listener {
 					$player->close("", "You were banned for {$settings['max_wrongs_time']} minutes.");
 				}
 
-				if($this->provider->passwordHash($args[1]) != $data['password']) {
+				if($this->provider->passwordHash($args[0]) != $data['password']) {
 					$player->sendMessage("Password mismatch.");
 					$this->wrong[$player->getName()]++;
 					return true;
@@ -124,6 +134,33 @@ class EventListener implements Listener {
 				$this->plugin->getScheduler()->cancelTask($this->task[$player->getName()]->getTaskId());
 				unset($this->task[$player->getName()]);
 				$this->provider->updatePlayer($player);
+				return true;
+				break;
+
+			case '/achpw':
+				if($this->valid[$player->getName()]) {
+					$player->sendMessage("You are not authorized.");
+					return true;
+				}
+
+				$data = $this->provider->getPlayer($player);
+
+				if(!isset($args[0], $args[1])) {
+					$player->sendMessage("Usage: /achpw <Old Password> <New Password>");
+					return true;
+				}
+
+				if($this->provider->passwordHash($args[0]) != $data['password']) {
+					$player->sendMessage("The old password does not match.");
+					return true;
+				}
+
+				if(!$this->provider->updatePassword($player, $args[1])) {
+					$player->sendMessage("An error has occurred.");
+					return true;
+				}
+
+				$player->sendMessage("Password changed successfully. Do not forget it ;)");
 				return true;
 				break;
 		}
@@ -180,15 +217,33 @@ class EventListener implements Listener {
 
 		$position = explode(", ", $data['position']);
 
-		if(isset($position[2])) {
-			$player->teleport(new Position((float)$position[0], (float)$position[1], (float)$position[2], $player->getLevel(), $position[3], $position[4]));
+		$settings = $this->config->get("settings");
+
+		if(isset($position[2]) && $this->plugin->getServer()->getLevelByName($position[5])) {
+			$player->teleport(new Position((float)$position[0], (float)$position[1], (float)$position[2], $this->plugin->getServer()->getLevelByName($position[5]), $position[3], $position[4]));
+		}else{
+			$player->teleport($this->plugin->getServer()->getDefaultLevel()->getSafeSpawn());
 		}
 
 		if($player->getAddress() != $data['ip']) {
 			$this->valid[$player->getName()] = true;
 			$player->setImmobile(true);
 
-			$player->sendMessage("/register or /login");
+			if($this->provider->getPlayer($player)) {
+				if($settings['form']) {
+					$this->onModalAuth($player);
+				}else{
+					$player->sendMessage("Please Login to continue playing on the Server.");
+					$player->sendMessage("To login, write: /login <password>");
+				}
+			}else{
+				if($settings['form']) {
+					$this->onModalRegister($player);
+				}else{
+					$player->sendMessage("Please Register to continue playing on the Server.");
+					$player->sendMessage("To register, write: /register <password> <repassword>");
+				}
+			}
 
 			$this->task[$player->getName()] = new AuthSecond($this->plugin, $player, $data, $this->config);
 			$this->plugin->getScheduler()->scheduleRepeatingTask($this->task[$player->getName()], 20);
@@ -211,6 +266,116 @@ class EventListener implements Listener {
 
 		unset($this->valid[$player->getName()]);
 		return true;
+	}
+
+	public function onModalRegister(Player $player) {
+		$form = $this->formapi->createCustomForm(function (Player $player, array $data = null){
+    		if($data === null){
+        		$this->onModalRegisterInfo($player, "Please Register.");
+        		return;
+    		}
+    	
+    		if(strlen($data[0]) == 0) {
+    			$this->onModalRegisterInfo($player, "Password must not be empty!");
+    			return;
+    		}
+
+    		if($data[0] != $data[1]) {
+    			$this->onModalRegisterInfo($player, "Password mismatch.");
+    			return;
+    		}else{
+    			$this->provider->registerPlayer($player, $data[0]);
+
+    			$player->sendMessage("You are successfully registered.");
+
+				$this->valid[$player->getName()] = false;
+				$player->setImmobile(false);
+				$this->plugin->getScheduler()->cancelTask($this->task[$player->getName()]->getTaskId());
+				unset($this->task[$player->getName()]);
+				$this->provider->updatePlayer($player);
+				return;
+    		}
+
+
+		});
+
+		$form->setTitle("Registration Form");
+		
+		$form->addInput("Password");
+		$form->addInput("RePassword");
+ 		$form->sendToPlayer($player);
+	}
+
+	public function onModalAuth(Player $player) {
+		$form = $this->formapi->createCustomForm(function (Player $player, array $data = null){
+    		if($data === null){
+        		$this->onModalAuthInfo($player, "Please Login.");
+        		return;
+    		}
+
+    		$cache = $this->provider->getPlayer($player);
+    		$settings = $this->config->get("settings");
+
+    		if($this->wrong[$player->getName()] >= $settings['max_wrongs']) {
+				$this->provider->banPlayer($player, $settings['max_wrongs_time']);
+				$this->wrong[$player->getName()] = -1;
+				$player->close("", "You were banned for {$settings['max_wrongs_time']} minutes.");
+			}
+
+    		if($this->provider->passwordHash($data[0]) != $cache['password']) {
+    			$this->onModalAuthInfo($player, "Password mismatch.");
+    			$this->wrong[$player->getName()]++;
+    			return;
+    		}else{
+    			$player->sendMessage("You are successfully authorized.");
+
+				$this->valid[$player->getName()] = false;
+				$player->setImmobile(false);
+				$this->plugin->getScheduler()->cancelTask($this->task[$player->getName()]->getTaskId());
+				unset($this->task[$player->getName()]);
+				$this->provider->updatePlayer($player);
+				return;
+    		}
+
+
+		});
+
+		$form->setTitle("Authorization Form");
+		
+		$form->addInput("Password");
+ 		$form->sendToPlayer($player);
+	}
+
+	public function onModalRegisterInfo($player, $message) {
+		$form = $this->formapi->createSimpleForm(function (Player $player, int $data = null){
+    		if($data === null || isset($data)){
+        		$this->onModalRegister($player);
+        		return;
+    		}
+
+		});
+
+		$form->setTitle("Information Form");
+		$form->setContent($message);
+		
+		$form->addButton("Ok");
+ 		$form->sendToPlayer($player);
+	}
+
+	public function onModalAuthInfo($player, $message) {
+		$form = $this->formapi->createSimpleForm(function (Player $player, int $data = null){
+    		if($data === null || isset($data)){
+        		$this->onModalAuth($player);
+        		return;
+    		}
+
+		});
+
+		$form->setTitle("Information Form");
+		$form->setContent($message);
+		
+		$form->addButton("Ok");
+ 		$form->sendToPlayer($player);
 	}
 
 	public function onBreak(BlockBreakEvent $event) : bool {

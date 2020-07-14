@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace RAuth\provider;
 
 use pocketmine\utils\Config;
@@ -11,7 +13,7 @@ class SQLITE {
 	public $db;
 	protected $config;
 
-	public function __construct($plugin, $config) {
+	public function __construct($plugin, $config, $dump = null) {
 		$this->plugin = $plugin;
 		$this->config = $config;
 
@@ -28,7 +30,9 @@ class SQLITE {
 
         $this->db['provider_cache']->exec($table);
 
-        $this->backupGenerate();
+        if($dump == null) {
+        	$this->backupGenerate();
+        }
 	}
 
 	/**
@@ -63,14 +67,13 @@ class SQLITE {
 	public function registerPlayer(Player $player, string $password) : bool {
 		$username = strtolower($player->getName());
 		$password = $this->passwordHash($password);
-		$x = (int)$player->getX();
-		$y = (int)$player->getY();
-		$z = (int)$player->getZ();
+		$x = $player->getX();
+		$y = $player->getY();
+		$z = $player->getZ();
 		$yaw = $player->getYaw();
 		$pitch = $player->getPitch();
-		$position = "{$x}, {$y}, {$x}, {$yaw}, {$pitch}";
-
-		var_dump($position);
+		$level = $player->getLevel()->getName();
+		$position = "{$x}, {$y}, {$z}, {$yaw}, {$pitch}, {$level}";
 
 		if(!$this->getPlayer($player)) {
 			$query = $this->db['provider_cache']->query("INSERT INTO `users`(`username`, `password`, `ip`, `banned`, `position`) VALUES ('{$username}','{$password}','{$player->getAddress()}','0','{$position}')");
@@ -93,15 +96,41 @@ class SQLITE {
 
 	public function updatePlayer(Player $player) : bool {
 		$username = strtolower($player->getName());
-		$x = (int)$player->getX();
-		$y = (int)$player->getY();
-		$z = (int)$player->getZ();
+		$x = $player->getX();
+		$y = $player->getY();
+		$z = $player->getZ();
 		$yaw = $player->getYaw();
 		$pitch = $player->getPitch();
-		$position = "{$x}, {$y}, {$x}, {$yaw}, {$pitch}";
+		$level = $player->getLevel()->getName();
+		$position = "{$x}, {$y}, {$z}, {$yaw}, {$pitch}, {$level}";
 
 		if($this->getPlayer($player)) {
 			$query = $this->db['provider_cache']->query("UPDATE `users` SET `ip`='{$player->getAddress()}', `position`='{$position}' WHERE `username`='{$username}'");
+			
+			if($query) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Update Player Password
+	 *
+	 * @param Player 
+	 *
+	 * @param string
+	 *
+	 * @return bool
+	 */
+
+	public function updatePassword(Player $player, string $password) {
+		$username = strtolower($player->getName());
+		$password = $this->passwordHash($password);
+
+		if($this->getPlayer($player)) {
+			$query = $this->db['provider_cache']->query("UPDATE `users` SET `password`='{$password}' WHERE `username`='{$username}'");
 			
 			if($query) {
 				return true;

@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace RAuth;
 
 use pocketmine\plugin\PluginBase;
 use RAuth\provider\Provider;
+use RAuth\libs\formapi\FormAPI;
 
 class Main extends PluginBase {
 
@@ -19,11 +22,12 @@ class Main extends PluginBase {
 
 	public function registerPluginEvents() : void {
 		$provider = new Provider($this);
+		$formapi = new FormAPI;
 		$provider->createData();
 
 		$config = $provider->getConfig();
 
-		$this->getServer()->getPluginManager()->registerEvents(new EventListener($this, $provider->provider, $config), $this);
+		$this->getServer()->getPluginManager()->registerEvents(new EventListener($this, $formapi, $provider->provider, $config), $this);
 	}
 }
 

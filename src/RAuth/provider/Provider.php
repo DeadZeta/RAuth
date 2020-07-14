@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace RAuth\provider;
 
 use pocketmine\plugin\PluginBase;
