@@ -12,4 +12,5 @@ Authorization for your PMMP server.
 - [X] Using Minecraft Forms (FormAPI integrated).
 - [ ] Converting SQLITE to MYSQL and vice versa. (Delayed)
 ## Contacts
+[![](https://poggit.pmmp.io/shield.state/RAuth)](https://poggit.pmmp.io/p/RAuth)
 Use "Issues" to send bugs. Get in touch with me discord: Divinity#9629.
