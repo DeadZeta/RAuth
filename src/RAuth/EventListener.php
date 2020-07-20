@@ -71,7 +71,7 @@ class EventListener implements Listener {
 					return true;
 				}
 
-				if(strlen($data[0]) == 0) {
+				if(strlen($args[0]) == 0) {
     				$player->sendMessage("Password must not be empty!");
     				return;
     			}

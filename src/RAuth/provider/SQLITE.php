@@ -176,11 +176,19 @@ class SQLITE {
 	 */
 
 	public function passwordHash(string $password) : string {
-		return md5(hash("ripemd128", $password));
+		$settings = $this->config->get("settings");
+
+		if($settings['salt'] == 0) {
+			return md5(hash("ripemd128", $password));
+		}else{
+			return md5(hash("ripemd128", $password.$settings['salt']));
+		}
 	}
 
 	/**
 	 * Creating backups SQLITE
+	 *
+	 * P.S If your server does not have auto reboot, then backups will not be created.
 	 *
 	 * @return bool
 	 */
