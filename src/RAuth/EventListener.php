@@ -186,7 +186,7 @@ class EventListener implements Listener {
 		if($this->authorizations[$player->getName()] >= $settings['max_joins']) {
 			$event->setKickMessage("Access denied.");
             $event->setCancelled();
-            $this->plugin->getServer()->getIPBans()->addBan($ip, "IP is banned for suspecting an attack on the server. BotFilter");
+            $this->plugin->getServer()->getIPBans()->addBan($player->getAddress(), "IP is banned for suspecting an attack on the server. BotFilter");
 		}
 
 		if($data['banned'] > 0) {
