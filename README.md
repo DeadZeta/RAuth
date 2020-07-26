@@ -5,7 +5,7 @@ Authorization for your PMMP server.
 ![logo_512](https://github.com/DeadZeta/RAuth/blob/master/icon512.png)
 ## Plans
 - [X] Elementary BotFilter.
-- [X] Password Salt (md5+ripemd128+salt)
+- [X] New Password Hash (using password_hash + PASSWORD_BCRYPT)
 - [X] It works on two providers: SQLITE, MYSQL
 - [X] Daily backups.
 - [X] Maintaining a player’s position in the world.
