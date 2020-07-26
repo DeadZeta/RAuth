@@ -66,7 +66,7 @@ class SQLITE {
 
 	public function registerPlayer(Player $player, string $password) : bool {
 		$username = strtolower($player->getName());
-		$password = $this->passwordHash($password);
+		$password = $this->passwordHash($player, $password);
 		$x = $player->getX();
 		$y = $player->getY();
 		$z = $player->getZ();
@@ -125,9 +125,9 @@ class SQLITE {
 	 * @return bool
 	 */
 
-	public function updatePassword(Player $player, string $password) {
+	public function updatePassword(Player $player, string $password) : bool {
 		$username = strtolower($player->getName());
-		$password = $this->passwordHash($password);
+		$password = $this->passwordHash($player, $password, "change");
 
 		if($this->getPlayer($player)) {
 			$query = $this->db['provider_cache']->query("UPDATE `users` SET `password`='{$password}' WHERE `username`='{$username}'");
@@ -170,19 +170,28 @@ class SQLITE {
 	/**
 	 * Creating a Password Hash
 	 *
-	 * @param string 
+	 * @param Player
 	 *
-	 * @return string
+	 * @param string
+	 *
+	 * @return string|bool
 	 */
 
-	public function passwordHash(string $password) : string {
-		$settings = $this->config->get("settings");
+	public function passwordHash(Player $player, string $password, string $type = null) {
+		if($this->getPlayer($player)) {
+			$player = $this->getPlayer($player);
+			if(isset($type)) {
+				return password_hash($password, PASSWORD_BCRYPT);
+			}
 
-		if($settings['salt'] == 0) {
-			return md5(hash("ripemd128", $password));
+			if(password_verify($password, $player['password'])) {
+				return true;
+			}
 		}else{
-			return md5(hash("ripemd128", $password.$settings['salt']));
+			return password_hash($password, PASSWORD_BCRYPT);
 		}
+
+		return false;
 	}
 
 	/**

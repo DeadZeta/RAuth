@@ -10,8 +10,6 @@ settings:
   timeout: 120
   # true - to use Forms for Authorization, false - to use commands /login, /register
   form: false
-  # Password Salt (0 - to disable)
-  salt: 0
 
 # Database Provider: SQLITE, MYSQL
 provider: SQLITE

@@ -121,7 +121,7 @@ class EventListener implements Listener {
 					$player->close("", "You were banned for {$settings['max_wrongs_time']} minutes.");
 				}
 
-				if($this->provider->passwordHash($args[0]) != $data['password']) {
+				if(!$this->provider->passwordHash($player, $args[0])) {
 					$player->sendMessage("Password mismatch.");
 					$this->wrong[$player->getName()]++;
 					return true;
@@ -150,7 +150,7 @@ class EventListener implements Listener {
 					return true;
 				}
 
-				if($this->provider->passwordHash($args[0]) != $data['password']) {
+				if(!$this->provider->passwordHash($player, $args[0])) {
 					$player->sendMessage("The old password does not match.");
 					return true;
 				}
@@ -322,7 +322,7 @@ class EventListener implements Listener {
 				$player->close("", "You were banned for {$settings['max_wrongs_time']} minutes.");
 			}
 
-    		if($this->provider->passwordHash($data[0]) != $cache['password']) {
+    		if(!$this->provider->passwordHash($player, $data[0])) {
     			$this->onModalAuthInfo($player, "Password mismatch.");
     			$this->wrong[$player->getName()]++;
     			return;
