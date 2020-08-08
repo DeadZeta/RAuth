@@ -1,10 +1,13 @@
 name: RAuth
-main: RAuth\Main
+main: DeadZeta\RAuth\Main
 api: 3.14.2
 mcpe-protocol: 407
-version: 1.3.2
+version: 1.3.3
 author: DeadZeta
 website: deadzeta.ml
+
+depend:
+- AutoRestarter
 
 commands:
   register:
