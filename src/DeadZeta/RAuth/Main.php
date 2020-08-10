@@ -6,7 +6,6 @@ namespace DeadZeta\RAuth;
 
 use pocketmine\plugin\PluginBase;
 use DeadZeta\RAuth\provider\Provider;
-use DeadZeta\RAuth\libs\formapi\FormAPI;
 
 class Main extends PluginBase {
 
@@ -22,12 +21,18 @@ class Main extends PluginBase {
 
 	public function registerPluginEvents() : void {
 		$provider = new Provider($this);
-		$formapi = new FormAPI;
+
+		if(!class_exists("DeadZeta\RAuth\libs\jojoe77777\FormAPI\FormAPI")) {
+				$this->getLogger()->error("Attention! Use Compiled Poggit or GitHub Release!");
+            	$this->getServer()->getPluginManager()->disablePlugin($this);
+            	return;
+		}
+
 		$provider->createData();
 
 		$config = $provider->getConfig();
 
-		$this->getServer()->getPluginManager()->registerEvents(new EventListener($this, $formapi, $provider->provider, $config), $this);
+		$this->getServer()->getPluginManager()->registerEvents(new EventListener($this, $provider->provider, $config), $this);
 	}
 }
 

@@ -9,6 +9,11 @@ use pocketmine\scheduler\Task;
 
 use DeadZeta\RAuth\task\AuthSecond;
 
+use DeadZeta\RAuth\libs\jojoe77777\FormAPI\{
+    CustomForm,
+    SimpleForm
+};
+
 use pocketmine\Player;
 
 use pocketmine\command\Command;
@@ -28,7 +33,6 @@ use pocketmine\event\entity\EntityDamageEvent;
 class EventListener implements Listener {
 
 	protected $plugin;
-	protected $formapi;
 	private $provider;
 	private $config;
 
@@ -37,9 +41,8 @@ class EventListener implements Listener {
 	protected $wrong = array();
 	protected $task = array();
 
-	public function __construct(PluginBase $plugin, $formapi, $provider, $config) {
+	public function __construct(PluginBase $plugin, $provider, $config) {
 		$this->plugin = $plugin;
-		$this->formapi = $formapi;
 		$this->provider = $provider;
 		$this->config = $config;
 	}
@@ -269,7 +272,7 @@ class EventListener implements Listener {
 	}
 
 	public function onModalRegister(Player $player) {
-		$form = $this->formapi->createCustomForm(function (Player $player, array $data = null){
+		$form = new CustomForm(function (Player $player, array $data = null){
     		if($data === null){
         		$this->onModalRegisterInfo($player, "Please Register.");
         		return;
@@ -307,7 +310,7 @@ class EventListener implements Listener {
 	}
 
 	public function onModalAuth(Player $player) {
-		$form = $this->formapi->createCustomForm(function (Player $player, array $data = null){
+		$form = new CustomForm(function (Player $player, array $data = null){
     		if($data === null){
         		$this->onModalAuthInfo($player, "Please Login.");
         		return;
@@ -347,7 +350,7 @@ class EventListener implements Listener {
 	}
 
 	public function onModalRegisterInfo($player, $message) {
-		$form = $this->formapi->createSimpleForm(function (Player $player, int $data = null){
+		$form = new SimpleForm(function (Player $player, int $data = null){
     		if($data === null || isset($data)){
         		$this->onModalRegister($player);
         		return;
@@ -363,7 +366,7 @@ class EventListener implements Listener {
 	}
 
 	public function onModalAuthInfo($player, $message) {
-		$form = $this->formapi->createSimpleForm(function (Player $player, int $data = null){
+		$form = new SimpleForm(function (Player $player, int $data = null){
     		if($data === null || isset($data)){
         		$this->onModalAuth($player);
         		return;
