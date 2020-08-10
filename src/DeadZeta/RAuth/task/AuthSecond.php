@@ -4,9 +4,9 @@ namespace DeadZeta\RAuth\task;
 
 use pocketmine\plugin\PluginBase;
 use pocketmine\Player;
-use pocketmine\scheduler\Task;
+use pocketmine\scheduler\PluginTask;
 
-class AuthSecond extends Task {
+class AuthSecond extends PluginTask {
 
 	protected $plugin;
 
@@ -15,6 +15,7 @@ class AuthSecond extends Task {
 	protected $time;
 
 	public function __construct(PluginBase $plugin, Player $player, $data, $config) {
+		parent::__construct($plugin);
 		$this->plugin = $plugin;
 		$this->player = $player;
 		$this->data = $data;
@@ -23,20 +24,20 @@ class AuthSecond extends Task {
 		$this->time = $settings['timeout'];
 	}
 
-	public function onRun(int $currentTick) {
+	public function onRun($currentTick) {
 		$this->time--;
 
 		if($this->data) {
-			$this->player->sendTip("Login to continue");
+			$this->player->sendTip("Авторизируйтесь, для продолжения.");
 		}else{
-			$this->player->sendTip("Register to continue");
+			$this->player->sendTip("Зарегистрируйтесь, для продолжения.");
 		}
 
 
 
 		if($this->time == 1) {
-			$this->player->close("", "Login timed out.");
-			$this->plugin->getScheduler()->cancelTask($this->getTaskId());
+			$this->player->close("", "Время авторизации вышло.");
+			$this->plugin->getServer()->getScheduler()->cancelTask($this->getTaskId());
 		}
 	}
 }

@@ -22,12 +22,6 @@ class Main extends PluginBase {
 	public function registerPluginEvents() : void {
 		$provider = new Provider($this);
 
-		if(!class_exists("DeadZeta\RAuth\libs\jojoe77777\FormAPI\FormAPI")) {
-				$this->getLogger()->error("Attention! Use Compiled Poggit or GitHub Release!");
-            	$this->getServer()->getPluginManager()->disablePlugin($this);
-            	return;
-		}
-
 		$provider->createData();
 
 		$config = $provider->getConfig();

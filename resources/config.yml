@@ -1,20 +1,18 @@
 ---
 settings:
-  # Maximum number of authorization attempts.
+  # Количество не правильных паролей.
   max_wrongs: 5
-  # Player ban time after all failed attempts (minutes).
+  # Время бана игрока который ввел не правильный пароль (минуты).
   max_wrongs_time: 5
-  # The number of visits from 1 IP. Attention, if the server does not have auto-restart then disable this limit by setting 0. BotFilter
+  # Количество входов с 1 IP адреса (Если на сервере не стоит АвтоПерезагрузка, то поставьте как минимум 10000 входов xD). БотФильтер
   max_joins: 25
-  # Time for the player to login (seconds).
+  # Время данное игроку чтобы авторизоватся/зарегистрироватся (секунды).
   timeout: 120
-  # true - to use Forms for Authorization, false - to use commands /login, /register
-  form: false
 
-# Database Provider: SQLITE, MYSQL
+# Провайдеры: SQLITE, MYSQL
 provider: SQLITE
 
-# MYSQL login details
+# MYSQL данные
 mysql_data:
   host: 127.0.0.1
   user: yourUser

@@ -1,21 +1,18 @@
 name: RAuth
 main: DeadZeta\RAuth\Main
-api: 3.14.2
+api: 2.0.0
 mcpe-protocol: 407
-version: 1.3.4
+version: 1.3.4-Fork
 author: DeadZeta
 website: deadzeta.ml
-
-depend:
-- AutoRestarter
 
 commands:
   register:
     default: true
-    description: Player Registration on the Server
+    description: Регистрация на сервере
   login:
     default: true
-    description: Player Authorization on IP Server
+    description: Авторизация на сервере через IP
   achpw:
     default: true
-    description: Player Password Change
+    description: Смена пароля

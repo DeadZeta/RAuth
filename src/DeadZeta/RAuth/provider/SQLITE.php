@@ -208,12 +208,12 @@ class SQLITE {
 		}
 
 		if(file_exists($this->plugin->getDataFolder() . "/backups/" . date("Y-m-d") . ".db")) {
-			$this->plugin->getLogger()->warning("SQLITE Dump already created");
+			$this->plugin->getLogger()->warning("SQLITE Бекап уже есть");
 			return false;
 		}
 
 		exec("cp " . $this->plugin->getDataFolder() . "users.db " . $this->plugin->getDataFolder() . "/backups/" . date("Y-m-d") . ".db");
-		$this->plugin->getLogger()->warning("SQLITE Dump Created");
+		$this->plugin->getLogger()->warning("SQLITE Бекап успешно создан");
 		return true;
 	}
 }

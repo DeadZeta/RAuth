@@ -21,7 +21,7 @@ class MYSQL {
 		$this->db['provider_cache'] = new \mysqli($mysql['host'], $mysql['user'], $mysql['password'], $mysql['base'], $mysql['port']);
 
 		if($this->db['provider_cache']->connect_error) {
-			$this->plugin->getLogger()->critical("MYSQL Provider can't connect to db.");
+			$this->plugin->getLogger()->critical("Провайдер MYSQL не может подключится к базе данных.");
 			$this->plugin->getServer()->getPluginManager()->disablePlugin($this->plugin);
 		}
 
@@ -213,14 +213,14 @@ class MYSQL {
 		}
 
 		if(file_exists($this->plugin->getDataFolder() . "/backups/" . date("Y-m-d") . ".sql")) {
-			$this->plugin->getLogger()->warning("MYSQL Dump already created");
+			$this->plugin->getLogger()->warning("MYSQL Бекап уже есть.");
 			return false;
 		}
 
 		$mysql = $this->config->get("mysql_data");
 
 		exec("mysqldump --user=".$mysql['user']." --password=".$mysql['password']." ".$mysql['base']." users > ".$this->plugin->getDataFolder()."/backups/".date('Y-m-d').".sql");
-		$this->plugin->getLogger()->warning("MYSQL Dump Created");
+		$this->plugin->getLogger()->warning("MYSQL Бекап успешно создан");
 		return true;
 	}
 }
