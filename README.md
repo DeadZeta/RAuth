@@ -1,19 +1,19 @@
-Authorization for your GenisysPRO/LiteCore server.
+Авторизация для Вашего GenisysPRO/LiteCore сервера.
 <br>
 ![logo_512](https://github.com/DeadZeta/RAuth/blob/master/icon512.png)
-## About Plugin
-Additional protection of Players and the Server from hacking, theft.
-Has in itself:
-- Minimum protection against bot attacks.
-- Plugin makes backups of databases every day.
-- Saving the last location of the player.
-- Protection against AFK:
-  If the player does not enter the password within the specified time, it will be removed from the server.
-- Protection against incorrect passwords:
-  If the player has entered the wrong password several times, he will be blocked for a while.
-- Several providers:
-  The plugin has Provider SQLITE3 for small servers and Provider MYSQL for multiple servers.
+## О Плагине
+Защита игроков и сервера от Взломов, Хаков и другого.
+Возможности:
+- Минимальная защита от Атаки Ботов.
+- Плагин ежедневно делает бекапы Баз Данных (При условии что есть АвтоПерезагрузка).
+- Сохранение последнего местоположения игрока.
+- Защита от АФК:
+  Если игрок не введет пароль в указанное время он будет кикнут с сервера.
+- Защита от не правильных паролей:
+  Если игрок ввел несколько не правильных паролей, то он будет забанен на некоторое время.
+- Несколько провайдеров:
+  Плагин поддерживает SQLITE3 для малых серверов и MYSQL для мультисерверности (больших серверов).
 
-ATTENTION! REQUIRED AutoRestarter!
+ВНИМАНИЕ! ТРЕБУТЕСЯ АвтоПерезагрузка!
 ## Contacts
-Use "Issues" to send bugs. Get in touch with me discord: Divinity#9629.
+Используйте "Issues" чтобы отправлять баги. Связатся со мной через Дискорд: Divinity#9629.
