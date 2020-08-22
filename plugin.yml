@@ -1,7 +1,6 @@
 name: RAuth
 main: DeadZeta\RAuth\Main
 api: 3.14.2
-mcpe-protocol: 407
 version: 1.3.4
 author: DeadZeta
 website: deadzeta.ml
