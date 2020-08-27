@@ -9,7 +9,7 @@ use pocketmine\scheduler\Task;
 
 use DeadZeta\RAuth\task\AuthSecond;
 
-use DeadZeta\RAuth\libs\jojoe77777\FormAPI\{
+use jojoe77777\FormAPI\{
     CustomForm,
     SimpleForm
 };
